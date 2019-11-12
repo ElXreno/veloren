@@ -29,7 +29,9 @@ BuildRequires:  pkgconfig(gdk-pixbuf-2.0)
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(pango)
 # Requires:       hicolor-icon-theme
+%if 0%{?fedora} || 0%{?rhel} >= 8
 Recommends:     %{name}-server-cli%{?_isa}
+%endif
 
 %description
 Veloren is a multiplayer voxel RPG written in Rust. It is inspired by games
@@ -40,7 +42,9 @@ and Minecraft.
 %package        server-cli
 Summary:        Standalone server for %{name}
 
+%if 0%{?fedora} || 0%{?rhel} >= 8
 Recommends:     %{name}%{?_isa} = %{version}-%{release}
+%endif
 
 %description    server-cli
 Standalone server for %{name}.
@@ -49,7 +53,9 @@ Standalone server for %{name}.
 %package        chat-cli
 Summary:        Console chat for %{name}
 
+%if 0%{?fedora} || 0%{?rhel} >= 8
 Recommends:     %{name}%{?_isa} = %{version}-%{release}
+%endif
 
 %description    chat-cli
 Console chat for %{name}.
