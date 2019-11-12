@@ -28,6 +28,9 @@ BuildRequires:  pkgconfig(gdk-3.0)
 BuildRequires:  pkgconfig(gdk-pixbuf-2.0)
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(pango)
+%if 0%{?rhel} >= 7
+BuildRequires:  python3-devel
+%endif
 # Requires:       hicolor-icon-theme
 %if 0%{?fedora} || 0%{?rhel} >= 8
 Recommends:     %{name}-server-cli%{?_isa}
