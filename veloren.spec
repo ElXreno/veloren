@@ -73,6 +73,12 @@ Console chat for %{name}.
 %prep
 %autosetup -p1 -n %{name}-%{commit}
 
+%if %{with release_build}
+echo "Building release package..."
+%else
+echo "Building debug package..."
+%endif
+
 ## Use recommended upstream veloren version of Rust toolchain
 rust_toolchain=$(cat rust-toolchain)
 curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain ${rust_toolchain} --profile minimal -y
