@@ -1,6 +1,9 @@
 ## WIP, expect some crap in packaging
 ## Note: requires internet access during build procces because of Rust nightly and git-lfs
 
+## Optimize for build time or performance
+%bcond_without release_build
+
 %global debug_package %{nil}
 
 %global commit        eb7b55d3ad78856593bbae365857ec5b3b79540e
@@ -9,7 +12,7 @@
 
 Name:           veloren
 Version:        0.4.0
-Release:        1.%{date}git%{shortcommit}%{?dist}
+Release:        3.%{date}git%{shortcommit}%{?dist}
 Summary:        Multiplayer voxel RPG written in Rust
 
 License:        GPLv3+
@@ -75,29 +78,47 @@ git clone https://gitlab.com/veloren/veloren.git
 
 pushd veloren
 git reset --hard %{commit}
-# sed -i 's/codegen-units = 1/opt-level = 0/; /lto = true/d' Cargo.toml
+
+%if %{without release_build}
+## Unoptimize dev/debug builds
+sed -i 's/opt-level = 2/opt-level = 0/' Cargo.toml
+%endif
+
 popd
-# sed -i '/default-run = "veloren-voxygen"/d' voxygen/Cargo.toml
 
 
 %build
+BUILD_FLAGS=
+
+%if %{with release_build}
+BUILD_FLAGS=--release
+%endif
+
 pushd veloren
-$HOME/.cargo/bin/cargo build --release
+
+$HOME/.cargo/bin/cargo build %{BUILD_FLAGS}
+
 popd
 
 %install
+TARGET_PATH=target/debug
+
+%if %{with release_build}
+TARGET_PATH=target/release
+%endif
+
 pushd veloren
 
 ## Game
-install -m 0755 -Dp target/release/%{name}-voxygen      %{buildroot}%{_bindir}/%{name}-voxygen
+install -m 0755 -Dp %{TARGET_PATH}/%{name}-voxygen      %{buildroot}%{_bindir}/%{name}-voxygen
 mkdir -p                                                %{buildroot}%{_datadir}/%{name}
 cp -a assets                                            %{buildroot}%{_datadir}/%{name}
 
 ## Standalone server
-install -m 0755 -Dp target/release/%{name}-server-cli   %{buildroot}%{_bindir}/%{name}-server-cli
+install -m 0755 -Dp %{TARGET_PATH}/%{name}-server-cli   %{buildroot}%{_bindir}/%{name}-server-cli
 
 ## Console chat
-install -m 0755 -Dp target/release/%{name}-chat-cli     %{buildroot}%{_bindir}/%{name}-chat-cli
+install -m 0755 -Dp %{TARGET_PATH}/%{name}-chat-cli     %{buildroot}%{_bindir}/%{name}-chat-cli
 
 popd
 
@@ -120,6 +141,9 @@ popd
 
 
 %changelog
+* Wed Nov 13 2019 ElXreno <elxreno@gmail.com> - 0.4.0-3.20191109giteb7b55d
+- Updated to eb7b55d3ad78856593bbae365857ec5b3b79540e commit
+
 * Mon Nov 11 2019 ElXreno <elxreno@gmail.com> - 0.4.0-2.20191107git5fe1eec
 - Fixed building and added chat-cli package
 
