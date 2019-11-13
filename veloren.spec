@@ -34,9 +34,10 @@ BuildRequires:  pkgconfig(pango)
 %if 0%{?rhel} >= 7
 BuildRequires:  python3-devel
 %endif
-# Requires:       hicolor-icon-theme
+
 %if 0%{?fedora} || 0%{?rhel} >= 8
 Recommends:     %{name}-server-cli%{?_isa}
+Recommends:     %{name}-chat-cli%{?_isa}
 %endif
 
 %description
@@ -74,9 +75,9 @@ Console chat for %{name}.
 rust_toolchain=$(cat rust-toolchain)
 curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain ${rust_toolchain} --profile minimal -y
 
-git clone https://gitlab.com/veloren/veloren.git
+git clone https://gitlab.com/%{name}/%{name}.git
 
-pushd veloren
+pushd %{name}
 git reset --hard %{commit}
 
 %if %{without release_build}
@@ -94,7 +95,7 @@ BUILD_FLAGS=
 BUILD_FLAGS=--release
 %endif
 
-pushd veloren
+pushd %{name}
 
 $HOME/.cargo/bin/cargo build %{BUILD_FLAGS}
 
@@ -107,7 +108,7 @@ TARGET_PATH=target/debug
 TARGET_PATH=target/release
 %endif
 
-pushd veloren
+pushd %{name}
 
 ## Game
 install -m 0755 -Dp %{TARGET_PATH}/%{name}-voxygen      %{buildroot}%{_bindir}/%{name}-voxygen
@@ -143,6 +144,7 @@ popd
 %changelog
 * Wed Nov 13 2019 ElXreno <elxreno@gmail.com> - 0.4.0-3.20191109giteb7b55d
 - Updated to eb7b55d3ad78856593bbae365857ec5b3b79540e commit
+- Minor fixes (thanks @atim)
 
 * Mon Nov 11 2019 ElXreno <elxreno@gmail.com> - 0.4.0-2.20191107git5fe1eec
 - Fixed building and added chat-cli package
