@@ -18,9 +18,11 @@ Summary:        Multiplayer voxel RPG written in Rust
 License:        GPLv3+
 URL:            https://gitlab.com/veloren/veloren
 Source0:        %{url}/-/archive/%{commit}/%{name}-%{version}.%{date}git%{shortcommit}.tar.gz
+Source1:        %{name}-voxygen.desktop
+Source2:        %{name}-voxygen.png
 
 # BuildRequires:  cargo >= 1.40
-# BuildRequires:  desktop-file-utils
+BuildRequires:  desktop-file-utils
 BuildRequires:  gcc
 BuildRequires:  git
 BuildRequires:  git-lfs
@@ -97,7 +99,7 @@ BUILD_FLAGS=--release
 
 pushd %{name}
 
-$HOME/.cargo/bin/cargo build %{BUILD_FLAGS}
+$HOME/.cargo/bin/cargo build ${BUILD_FLAGS}
 
 popd
 
@@ -111,17 +113,24 @@ TARGET_PATH=target/release
 pushd %{name}
 
 ## Game
-install -m 0755 -Dp %{TARGET_PATH}/%{name}-voxygen      %{buildroot}%{_bindir}/%{name}-voxygen
+install -m 0755 -Dp ${TARGET_PATH}/%{name}-voxygen      %{buildroot}%{_bindir}/%{name}-voxygen
 mkdir -p                                                %{buildroot}%{_datadir}/%{name}
 cp -a assets                                            %{buildroot}%{_datadir}/%{name}
 
 ## Standalone server
-install -m 0755 -Dp %{TARGET_PATH}/%{name}-server-cli   %{buildroot}%{_bindir}/%{name}-server-cli
+install -m 0755 -Dp ${TARGET_PATH}/%{name}-server-cli   %{buildroot}%{_bindir}/%{name}-server-cli
 
 ## Console chat
-install -m 0755 -Dp %{TARGET_PATH}/%{name}-chat-cli     %{buildroot}%{_bindir}/%{name}-chat-cli
+install -m 0755 -Dp ${TARGET_PATH}/%{name}-chat-cli     %{buildroot}%{_bindir}/%{name}-chat-cli
 
 popd
+
+## Install desktop file and icon
+desktop-file-install \
+    --dir %{buildroot}%{_datadir}/applications \
+    %{SOURCE1}
+
+install -m 0644 -Dp %{SOURCE1} %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/%{name}-voxygen.png
 
 
 %files
@@ -129,6 +138,8 @@ popd
 %doc README.md
 %{_bindir}/%{name}-voxygen
 %{_datadir}/%{name}
+%{_datadir}/applications/%{name}-voxygen.desktop
+%{_datadir}/icons/hicolor/256x256/apps/%{name}-voxygen.png
 
 %files server-cli
 %license LICENSE
@@ -144,6 +155,7 @@ popd
 %changelog
 * Wed Nov 13 2019 ElXreno <elxreno@gmail.com> - 0.4.0-3.20191109giteb7b55d
 - Updated to eb7b55d3ad78856593bbae365857ec5b3b79540e commit
+- Added desktop file and icon
 - Minor fixes (thanks @atim)
 
 * Mon Nov 11 2019 ElXreno <elxreno@gmail.com> - 0.4.0-2.20191107git5fe1eec
