@@ -12,14 +12,19 @@
 
 Name:           veloren
 Version:        0.4.0
-Release:        3.%{date}git%{shortcommit}%{?dist}
+Release:        4.%{date}git%{shortcommit}%{?dist}
 Summary:        Multiplayer voxel RPG written in Rust
 
 License:        GPLv3+
 URL:            https://gitlab.com/veloren/veloren
 Source0:        %{url}/-/archive/%{commit}/%{name}-%{version}.%{date}git%{shortcommit}.tar.gz
 Source1:        %{name}-voxygen.desktop
-Source2:        %{name}-voxygen.png
+Source2:        %{name}-voxygen-16.png
+Source3:        %{name}-voxygen-32.png
+Source4:        %{name}-voxygen-48.png
+Source5:        %{name}-voxygen-64.png
+Source6:        %{name}-voxygen-128.png
+Source7:        %{name}-voxygen-256.png
 
 # BuildRequires:  cargo >= 1.40
 BuildRequires:  desktop-file-utils
@@ -36,6 +41,8 @@ BuildRequires:  pkgconfig(pango)
 %if 0%{?rhel} >= 7
 BuildRequires:  python3-devel
 %endif
+
+Requires:       hicolor-icon-theme
 
 %if 0%{?fedora} || 0%{?rhel} >= 8
 Recommends:     %{name}-server-cli%{?_isa}
@@ -131,12 +138,17 @@ install -m 0755 -Dp ${TARGET_PATH}/%{name}-chat-cli     %{buildroot}%{_bindir}/%
 
 popd
 
-## Install desktop file and icon
+## Install desktop file
 desktop-file-install \
     --dir %{buildroot}%{_datadir}/applications \
     %{SOURCE1}
 
-install -m 0644 -Dp %{SOURCE1} %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/%{name}-voxygen.png
+## Install icons
+for size in 16 32 48 64 128 256; do
+    dir=%{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps
+    install -d $dir
+    install -m 0644 -p %{_sourcedir}/%{name}-voxygen-${size}.png $dir/%{name}-voxygen.png
+done
 
 
 %files
@@ -145,7 +157,7 @@ install -m 0644 -Dp %{SOURCE1} %{buildroot}%{_datadir}/icons/hicolor/256x256/app
 %{_bindir}/%{name}-voxygen
 %{_datadir}/%{name}
 %{_datadir}/applications/%{name}-voxygen.desktop
-%{_datadir}/icons/hicolor/256x256/apps/%{name}-voxygen.png
+%{_datadir}/icons/hicolor/*/apps/%{name}-voxygen.png
 
 %files server-cli
 %license LICENSE
@@ -159,6 +171,9 @@ install -m 0644 -Dp %{SOURCE1} %{buildroot}%{_datadir}/icons/hicolor/256x256/app
 
 
 %changelog
+* Sat Nov 16 2019 ElXreno <elxreno@gmail.com> - 0.4.0-4.20191109giteb7b55d
+- Added more icons resolution and fixed it's installation
+
 * Wed Nov 13 2019 ElXreno <elxreno@gmail.com> - 0.4.0-3.20191109giteb7b55d
 - Updated to eb7b55d3ad78856593bbae365857ec5b3b79540e commit
 - Added desktop file and icon
