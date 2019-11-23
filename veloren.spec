@@ -6,13 +6,13 @@
 
 %global debug_package %{nil}
 
-%global commit        f380af930f629ef1114bf6daeff1911be5e405e7
+%global commit        9de10759d16229f877bedf92dbcb9f50d5ec8a14
 %global shortcommit   %(c=%{commit}; echo ${c:0:7})
-%global date          20191120
+%global date          20191123
 
 Name:           veloren
 Version:        0.4.0
-Release:        5.%{date}git%{shortcommit}%{?dist}
+Release:        6.%{date}git%{shortcommit}%{?dist}
 Summary:        Multiplayer voxel RPG written in Rust
 
 License:        GPLv3+
@@ -90,17 +90,15 @@ echo "Building debug package..."
 rust_toolchain=$(cat rust-toolchain)
 curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain ${rust_toolchain} --profile minimal -y
 
-git clone https://gitlab.com/%{name}/%{name}.git
-
-pushd %{name}
+git init
+git remote add origin https://gitlab.com/%{name}/%{name}.git
+git fetch origin %{commit}
 git reset --hard %{commit}
 
 %if %{without release_build}
 ## Unoptimize dev/debug builds
 sed -i 's/opt-level = 2/opt-level = 0/' Cargo.toml
 %endif
-
-popd
 
 
 %build
@@ -110,11 +108,8 @@ BUILD_FLAGS=
 BUILD_FLAGS=--release
 %endif
 
-pushd %{name}
-
 $HOME/.cargo/bin/cargo build ${BUILD_FLAGS}
 
-popd
 
 %install
 TARGET_PATH=target/debug
@@ -122,8 +117,6 @@ TARGET_PATH=target/debug
 %if %{with release_build}
 TARGET_PATH=target/release
 %endif
-
-pushd %{name}
 
 ## Game
 install -m 0755 -Dp ${TARGET_PATH}/%{name}-voxygen      %{buildroot}%{_bindir}/%{name}-voxygen
@@ -135,8 +128,6 @@ install -m 0755 -Dp ${TARGET_PATH}/%{name}-server-cli   %{buildroot}%{_bindir}/%
 
 ## Console chat
 install -m 0755 -Dp ${TARGET_PATH}/%{name}-chat-cli     %{buildroot}%{_bindir}/%{name}-chat-cli
-
-popd
 
 ## Install desktop file
 desktop-file-install \
@@ -171,6 +162,9 @@ done
 
 
 %changelog
+* Sat Nov 23 2019 ElXreno <elxreno@gmail.com> - 0.4.0-6.20191123git9de1075
+- Updated to commit 9de10759d16229f877bedf92dbcb9f50d5ec8a14
+
 * Wed Nov 20 2019 ElXreno <elxreno@gmail.com> - 0.4.0-5.20191120gitf380af9
 - Updated to commit eb7b55d3ad78856593bbae365857ec5b3b79540e
 
