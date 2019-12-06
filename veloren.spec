@@ -6,13 +6,13 @@
 
 %global debug_package %{nil}
 
-%global commit        b7a084cbb8db211400d0260261cafef57002755c
+%global commit        ea6374b1e452f48cea58f9fce343c4f5d323e5ed
 %global shortcommit   %(c=%{commit}; echo ${c:0:7})
-%global date          20191128
+%global date          20191203
 
 Name:           veloren
 Version:        0.4.0
-Release:        7.%{date}git%{shortcommit}%{?dist}
+Release:        8.%{date}git%{shortcommit}%{?dist}
 Summary:        Multiplayer voxel RPG written in Rust
 
 License:        GPLv3+
@@ -162,6 +162,9 @@ done
 
 
 %changelog
+* Fri Dec 06 2019 ElXreno <elxreno@gmail.com> - 0.4.0-8.20191203gitea6374b
+- Updated to commit ea6374b1e452f48cea58f9fce343c4f5d323e5ed
+
 * Thu Nov 28 2019 ElXreno <elxreno@gmail.com> - 0.4.0-7.20191128gitb7a084c
 - Updated to commit b7a084cbb8db211400d0260261cafef57002755c
 
