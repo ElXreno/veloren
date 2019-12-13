@@ -6,13 +6,13 @@
 
 %global debug_package %{nil}
 
-%global commit        ea6374b1e452f48cea58f9fce343c4f5d323e5ed
+%global commit        2eb32c8d55ed93ecc7dbe64c6ac4847365b57408
 %global shortcommit   %(c=%{commit}; echo ${c:0:7})
-%global date          20191203
+%global date          20191213
 
 Name:           veloren
 Version:        0.4.0
-Release:        8.%{date}git%{shortcommit}%{?dist}
+Release:        9.%{date}git%{shortcommit}%{?dist}
 Summary:        Multiplayer voxel RPG written in Rust
 
 License:        GPLv3+
@@ -53,6 +53,16 @@ Recommends:     %{name}-chat-cli%{?_isa}
 Veloren is a multiplayer voxel RPG written in Rust. It is inspired by games
 such as Cube World, Legend of Zelda: Breath of the Wild, Dwarf Fortress
 and Minecraft.
+
+
+%package        data
+Summary:        Data files for %{name}
+BuildArch:      noarch
+
+Requires:       %{name} = %{version}-%{release}
+
+%description    data
+Data files for %{name}.
 
 
 %package        server-cli
@@ -142,10 +152,16 @@ for size in 16 32 48 64 128 256; do
 done
 
 
+%check
+desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}-voxygen.desktop
+
+
 %files
 %license LICENSE
-%doc README.md
+%doc README.md CONTRIBUTING.md
 %{_bindir}/%{name}-voxygen
+
+%files data
 %{_datadir}/%{name}
 %{_datadir}/applications/%{name}-voxygen.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}-voxygen.png
@@ -162,6 +178,9 @@ done
 
 
 %changelog
+* Fri Dec 13 2019 ElXreno <elxreno@gmail.com> - 0.4.0-9.20191213git2eb32c8
+- Updated to commit 2eb32c8d55ed93ecc7dbe64c6ac4847365b57408
+
 * Fri Dec 06 2019 ElXreno <elxreno@gmail.com> - 0.4.0-8.20191203gitea6374b
 - Updated to commit ea6374b1e452f48cea58f9fce343c4f5d323e5ed
 
