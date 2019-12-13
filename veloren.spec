@@ -43,6 +43,7 @@ BuildRequires:  python3-devel
 %endif
 
 Requires:       hicolor-icon-theme
+Requires:       %{name}-data = %{version}-%{release}
 
 %if 0%{?fedora} || 0%{?rhel} >= 8
 Recommends:     %{name}-server-cli%{?_isa}
